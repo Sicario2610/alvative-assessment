@@ -12,12 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getQuote = getQuote;
 exports.sendQuoteEmail = sendQuoteEmail;
-// src/utils/sendQuoteEmail.ts
-const axios_1 = __importDefault(require("axios"));
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const quotes_1 = require("./quotes");
 dotenv_1.default.config();
 // Reusable transporter
 const transporter = nodemailer_1.default.createTransport({
@@ -27,26 +25,10 @@ const transporter = nodemailer_1.default.createTransport({
         pass: process.env.GMAIL_APP_PASSWORD,
     },
 });
-// Get a random quote
-function getQuote() {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const res = yield axios_1.default.get("https://api.quotable.io/random");
-            return {
-                quote: res.data.content,
-                author: res.data.author,
-            };
-        }
-        catch (error) {
-            console.error("Quote fetch error:", error);
-            return { quote: "Keep pushing forward!", author: "Unknown" };
-        }
-    });
-}
 // Send quote email
 function sendQuoteEmail(email) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { quote, author } = yield getQuote();
+        const { quote, author } = (0, quotes_1.getQuoteSequentially)();
         const mailOptions = {
             from: process.env.GMAIL_USER,
             to: email,
