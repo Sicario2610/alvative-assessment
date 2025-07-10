@@ -4,7 +4,7 @@ import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 
 dotenv.config();
-
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 // Reusable transporter
 const transporter = nodemailer.createTransport({
   service: "gmail",
