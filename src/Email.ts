@@ -15,19 +15,21 @@ const transporter = nodemailer.createTransport({
 });
 
 // Get a random quote
-export async function getQuote() {
+export async function getQuote(): Promise<{ quote: string; author: string }> {
   try {
-    const res = await axios.get("https://api.quotable.io/random");
-    return {
-      quote: res.data.content,
-      author: res.data.author,
-    };
+    const response = await axios.get("https://zenquotes.io/api/random");
+    const quote = response.data[0].q;
+    const author = response.data[0].a;
+
+    return { quote, author };
   } catch (error: unknown) {
     console.error("Quote fetch error:", error);
-    return { quote: "Keep pushing forward!", author: "Unknown" };
+    return {
+      quote: "Keep pushing forward!",
+      author: "Unknown",
+    };
   }
 }
-
 // Send quote email
 export async function sendQuoteEmail(email: string) {
   const { quote, author } = await getQuote();
