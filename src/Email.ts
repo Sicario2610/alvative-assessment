@@ -1,10 +1,8 @@
-// src/utils/sendQuoteEmail.ts
-import axios from "axios";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
+import { getQuoteSequentially } from "./quotes";
 
 dotenv.config();
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 // Reusable transporter
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -14,25 +12,9 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Get a random quote
-export async function getQuote(): Promise<{ quote: string; author: string }> {
-  try {
-    const response = await axios.get("https://zenquotes.io/api/random");
-    const quote = response.data[0].q;
-    const author = response.data[0].a;
-
-    return { quote, author };
-  } catch (error: unknown) {
-    console.error("Quote fetch error:", error);
-    return {
-      quote: "Keep pushing forward!",
-      author: "Unknown",
-    };
-  }
-}
 // Send quote email
 export async function sendQuoteEmail(email: string) {
-  const { quote, author } = await getQuote();
+  const { quote, author } = getQuoteSequentially();
 
   const mailOptions = {
     from: process.env.GMAIL_USER,
