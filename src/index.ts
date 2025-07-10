@@ -11,6 +11,14 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
 
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || "*", // ✅ set to frontend origin in production
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
 // Enable CORS for all routes
 app.use(cors()); // Allow all origins for CORS
 
@@ -139,6 +147,19 @@ app.use((error: any, req: Request, res: Response, next: any) => {
     message: "Something went wrong on the server",
   });
 });
+
+// Your routes and middleware here
+app.get("/", (req, res) => {
+  res.send("App is running!");
+});
+
+// Self-ping to keep alive
+setInterval(() => {
+  axios
+    .get("/")
+    .then(() => console.log("Self-ping success"))
+    .catch((err) => console.error("Self-ping failed:", err.message));
+}, 2 * 60 * 1000);
 
 // Start the server
 app.listen(port, () => {

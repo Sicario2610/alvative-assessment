@@ -22,6 +22,11 @@ const crypto_1 = __importDefault(require("crypto"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = process.env.PORT || 3000;
+app.use((0, cors_1.default)({
+    origin: process.env.FRONTEND_URL || "*", // ✅ set to frontend origin in production
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+}));
 // Enable CORS for all routes
 app.use((0, cors_1.default)()); // Allow all origins for CORS
 // Middleware to parse JSON request bodies
@@ -113,6 +118,17 @@ app.use((error, req, res, next) => {
         message: "Something went wrong on the server",
     });
 });
+// Your routes and middleware here
+app.get("/", (req, res) => {
+    res.send("App is running!");
+});
+// Self-ping to keep alive
+setInterval(() => {
+    axios_1.default
+        .get("/")
+        .then(() => console.log("Self-ping success"))
+        .catch((err) => console.error("Self-ping failed:", err.message));
+}, 2 * 60 * 1000);
 // Start the server
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
