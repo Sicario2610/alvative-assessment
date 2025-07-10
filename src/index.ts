@@ -156,7 +156,7 @@ app.get("/", (req, res) => {
 // Self-ping to keep alive
 setInterval(() => {
   axios
-    .get("/")
+    .get("https://alvative-assessment.onrender.com/")
     .then(() => console.log("Self-ping success"))
     .catch((err) => console.error("Self-ping failed:", err.message));
 }, 2 * 60 * 1000);
